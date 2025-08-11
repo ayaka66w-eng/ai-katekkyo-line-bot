@@ -1,4 +1,11 @@
 {
+  "version": 2,
+  "builds": [
+    { "src": "api/**/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ],
   "crons": [
     {
       "path": "/api/cron/daily-tasks",
