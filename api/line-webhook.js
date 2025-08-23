@@ -94,8 +94,8 @@ async function handleEvent(event) {
                         quantity: 1,
                     }],
                     mode: 'subscription',
-                    success_url: 'ここにあなたのLIFF URLを貼り付け', // LIFFアプリ登録後に設定
-                    cancel_url: 'ここにあなたのLIFF URLを貼り付け',  // LIFFアプリ登録後に設定
+                    success_url: 'https://liff.line.me/2007938295-pkw8rN7e', // LIFFアプリ登録後に設定
+                    cancel_url: 'https://liff.line.me/2007938295-pkw8rN7e',  // LIFFアプリ登録後に設定
                     client_reference_id: userId, // 誰の決済か紐付けるためにLINEのユーザーIDを渡す
                 });
 
