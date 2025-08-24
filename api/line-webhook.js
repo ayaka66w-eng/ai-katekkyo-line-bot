@@ -11,6 +11,11 @@ const crypto = require('crypto');
 // LINE Webhookハンドラー (Vercelはこれを実行する)
 // ======================================================================
 module.exports = async (req, res) => {
+    // GETリクエスト（Webhook検証用）の場合は、200 OKを返して終了
+    if (req.method === 'GET') {
+        return res.status(200).send('OK');
+    }
+
     // POST以外のリクエストは無視
     if (req.method !== 'POST') {
         return res.status(405).end();
@@ -26,17 +31,15 @@ module.exports = async (req, res) => {
 
         // 署名を検証
         const expectedSignature = crypto.createHmac('sha256', config.channelSecret)
-                                      .update(body).digest('base64');
+                                     .update(body).digest('base64');
         if (signature !== expectedSignature) {
             console.error("署名検証エラー");
-            return; // OKを返した後なので、returnで処理を終了
+            return;
         }
 
-        // イベントを一つずつ処理
         const events = req.body.events;
         for (const event of events) {
             if (event.type === 'message' || event.type === 'follow') {
-                // handleEventの完了を待たずに実行（ノンブロッキング）
                 handleEvent(event).catch(err => console.error('HandleEvent Error:', err));
             }
         }
@@ -83,8 +86,7 @@ async function handleEvent(event) {
                 await updateSpreadsheet(userId, dataToUpdate);
                 await lineClient.replyMessage(event.replyToken, { type: 'text', text: REPLY_MESSAGES.askGrade });
                 return;
-            } 
-            else if (messageText === '500円') {
+            } else if (messageText === '500円') {
                 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
                 
                 const session = await stripe.checkout.sessions.create({
